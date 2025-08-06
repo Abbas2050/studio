@@ -89,7 +89,7 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
                     <TableCell className="text-right">{formatCurrency(acc.margin)}</TableCell>
                     <TableCell className="text-right">{formatCurrency(acc.freeMargin)}</TableCell>
                     <TableCell className="text-right">
-                        <Badge variant={acc.marginLevel < 200 ? 'destructive' : 'default'} className={cn(acc.marginLevel < 500 && acc.marginLevel >=200 && 'bg-yellow-500/80')}>
+                        <Badge variant={acc.marginLevel < 200 ? 'destructive' : 'default'} className={cn(acc.marginLevel < 500 && acc.marginLevel >=200 && 'bg-yellow-500/80', acc.marginLevel >= 500 && 'bg-green-500/80' )}>
                             {acc.marginLevel.toFixed(2)}%
                         </Badge>
                     </TableCell>

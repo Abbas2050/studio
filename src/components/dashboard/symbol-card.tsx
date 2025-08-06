@@ -3,11 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { Area, AreaChart } from 'recharts';
-import { TrendingUp, TrendingDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 import type { SymbolStat } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 
 type SymbolCardProps = {
   data?: SymbolStat;
@@ -43,7 +42,7 @@ export function SymbolCard({ data, loading }: SymbolCardProps) {
   } satisfies ChartConfig;
 
   return (
-    <Card className="overflow-hidden transition-all bg-secondary/20 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 backdrop-blur-sm">
+    <Card className="overflow-hidden transition-all bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5 hover:border-primary/50 hover:shadow-primary/10">
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
           <CardTitle className="font-headline text-lg">{data.symbol}</CardTitle>

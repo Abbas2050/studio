@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn, formatCompactNumber } from '@/lib/utils';
-import { ArrowUpDown, BarChart, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react';
 import { Progress } from '../ui/progress';
 
 type SymbolStatsTableProps = {
@@ -46,14 +46,9 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
     <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5 transition-all duration-300 hover:shadow-primary/10">
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-md bg-primary/10 border border-primary/20">
-              <BarChart className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="font-headline text-2xl text-primary">Symbol Volume Statistics</CardTitle>
-              <CardDescription>Real-time trading volume data</CardDescription>
-            </div>
+          <div>
+            <CardTitle className="font-headline text-2xl">Market Watch</CardTitle>
+            <CardDescription>Real-time trading volume and price data</CardDescription>
           </div>
           <Input
             placeholder="Search Symbol..."
@@ -71,6 +66,8 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
                 <TableHead>
                   <div className="flex items-center gap-1">Symbol <ArrowUpDown className="h-3 w-3" /></div>
                 </TableHead>
+                <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-right">Change</TableHead>
                 <TableHead className="text-right">
                   <div className="flex items-center justify-end gap-1">Buy Volume <ArrowUpDown className="h-3 w-3" /></div>
                 </TableHead>
@@ -92,6 +89,10 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
                       <div className="font-medium text-primary/90">{stat.symbol}</div>
                       <div className="text-xs text-muted-foreground">{stat.name}</div>
                     </TableCell>
+                    <TableCell className="text-right font-mono">{stat.price.toFixed(4)}</TableCell>
+                    <TableCell className={cn("text-right font-mono", stat.changePercent >= 0 ? 'text-green-400' : 'text-red-400')}>
+                      {stat.changePercent.toFixed(2)}%
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="font-semibold text-green-400">{formatCompactNumber(stat.buyVolume)}</div>
                       <Progress value={stat.buyVolumePercent} indicatorClassName="bg-green-500" className="h-1.5 mt-1 bg-green-500/20" />
@@ -110,7 +111,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center h-24">
+                  <TableCell colSpan={6} className="text-center h-24">
                     No symbols found.
                   </TableCell>
                 </TableRow>
