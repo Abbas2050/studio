@@ -54,8 +54,8 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            <AccountsTable loading={loading} data={data?.accounts ?? []} />
             <SymbolStatsTable loading={loading} data={symbolStats} />
+            <AccountsTable loading={loading} data={data?.accounts ?? []} />
           </div>
         </div>
       </main>
