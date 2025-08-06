@@ -29,6 +29,9 @@ const generateSymbolData = (symbolInfo: typeof symbols[0]): SymbolStat => {
   
   history.push({ name: 'Now', value: price });
 
+  const buyVolume = Math.random() * 1000;
+  const sellVolume = Math.random() * 1000;
+
   return {
     symbol: symbolInfo.symbol,
     name: symbolInfo.name,
@@ -38,6 +41,9 @@ const generateSymbolData = (symbolInfo: typeof symbols[0]): SymbolStat => {
     spread: symbolInfo.spread + (Math.random() - 0.5) * (symbolInfo.spread * 0.1),
     trend: change >= 0 ? 'up' : 'down',
     history: history.slice(-20),
+    buyVolume: buyVolume,
+    sellVolume: sellVolume,
+    netVolume: buyVolume - sellVolume,
   };
 };
 

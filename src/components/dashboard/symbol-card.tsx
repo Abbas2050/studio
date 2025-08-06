@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { Area, AreaChart } from 'recharts';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { SymbolStat } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -17,18 +17,17 @@ type SymbolCardProps = {
 export function SymbolCard({ data, loading }: SymbolCardProps) {
   if (loading || !data) {
     return (
-      <Card className="animate-pulse">
-        <CardHeader>
+      <Card className="animate-pulse bg-card/50">
+        <CardHeader className="p-4">
           <div className="flex justify-between items-center">
-            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-20" />
             <Skeleton className="h-4 w-12" />
           </div>
-          <Skeleton className="h-4 w-40 mt-1" />
+          <Skeleton className="h-4 w-28 mt-1" />
         </CardHeader>
-        <CardContent>
-          <Skeleton className="h-8 w-32 mb-2" />
-          <Skeleton className="h-5 w-20 mb-4" />
-          <Skeleton className="h-[50px] w-full" />
+        <CardContent className="p-4 pt-0">
+          <Skeleton className="h-7 w-24 mb-2" />
+          <Skeleton className="h-[40px] w-full" />
         </CardContent>
       </Card>
     );
@@ -44,28 +43,22 @@ export function SymbolCard({ data, loading }: SymbolCardProps) {
   } satisfies ChartConfig;
 
   return (
-    <Card className="overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="font-headline text-2xl">{data.symbol}</CardTitle>
-          <Badge variant={isPositive ? 'default' : 'destructive'} className={cn(
-            'flex items-center gap-1', 
-            isPositive ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'
-          )}>
-            {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+    <Card className="overflow-hidden transition-all bg-secondary/20 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 backdrop-blur-sm">
+      <CardHeader className="p-4">
+        <div className="flex justify-between items-start">
+          <CardTitle className="font-headline text-lg">{data.symbol}</CardTitle>
+          <div className={cn("flex items-center gap-1 text-xs font-semibold", isPositive ? 'text-green-400' : 'text-red-400')}>
+             {isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
             <span>{data.changePercent.toFixed(2)}%</span>
-          </Badge>
+          </div>
         </div>
-        <CardDescription className="truncate">{data.name}</CardDescription>
+        <CardDescription className="text-xs truncate">{data.name}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 pt-0">
         <div className="mb-2">
-          <p className="text-3xl font-bold font-headline">{data.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</p>
-          <p className={cn("text-sm font-semibold", isPositive ? 'text-green-400' : 'text-red-400')}>
-            {isPositive ? '+' : ''}{data.change.toFixed(2)}
-          </p>
+          <p className="text-2xl font-bold font-headline">{data.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</p>
         </div>
-        <ChartContainer config={chartConfig} className="h-[50px] w-full">
+        <ChartContainer config={chartConfig} className="h-[40px] w-full">
           <AreaChart
             accessibilityLayer
             data={data.history}

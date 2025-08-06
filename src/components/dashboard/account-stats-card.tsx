@@ -7,7 +7,7 @@ import type { AccountStats } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 type AccountStatsCardProps = {
-  stats: AccountStats | null;
+  stats: { summary: AccountStats } | null;
   loading: boolean;
 };
 
@@ -15,14 +15,16 @@ const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
 const StatItem = ({ label, value, className }: { label: string; value: string | React.ReactNode; className?: string }) => (
-  <div>
-    <p className="text-sm text-muted-foreground">{label}</p>
-    <p className={cn("text-xl font-semibold font-headline", className)}>{value}</p>
+  <div className="flex flex-col items-center text-center p-2 rounded-lg bg-secondary/30">
+    <p className="text-xs sm:text-sm text-muted-foreground">{label}</p>
+    <p className={cn("text-lg sm:text-xl font-semibold font-headline", className)}>{value}</p>
   </div>
 );
 
 export function AccountStatsCard({ stats, loading }: AccountStatsCardProps) {
-  if (loading || !stats) {
+  const summary = stats?.summary;
+
+  if (loading || !summary) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -30,25 +32,15 @@ export function AccountStatsCard({ stats, loading }: AccountStatsCardProps) {
           <Skeleton className="h-4 w-64 mt-1" />
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-20" />
-              <Skeleton className="h-7 w-32" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-16" />
-              <Skeleton className="h-7 w-28" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-16" />
-              <Skeleton className="h-7 w-24" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-7 w-32" />
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Array.from({length: 4}).map((_, i) => (
+              <div key={i} className="space-y-2 p-2 rounded-lg bg-secondary/30">
+                <Skeleton className="h-5 w-20 mx-auto" />
+                <Skeleton className="h-7 w-32 mx-auto" />
+              </div>
+            ))}
           </div>
-          <div className="mt-8 space-y-2">
+          <div className="mt-6 space-y-2">
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-4 w-full" />
           </div>
@@ -64,28 +56,28 @@ export function AccountStatsCard({ stats, loading }: AccountStatsCardProps) {
   };
 
   return (
-    <Card className="w-full bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg shadow-primary/5">
+    <Card className="w-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Wallet</CardTitle>
-        <CardDescription>Live summary of your trading account.</CardDescription>
+        <CardTitle className="font-headline text-2xl">Accounts Summary</CardTitle>
+        <CardDescription>Live summary of all your trading accounts.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <StatItem label="Balance" value={formatCurrency(stats.balance)} className="text-primary" />
-          <StatItem label="Equity" value={formatCurrency(stats.equity)} />
-          <StatItem label="Margin Used" value={formatCurrency(stats.margin)} />
-          <StatItem label="Free Margin" value={formatCurrency(stats.freeMargin)} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <StatItem label="Total Balance" value={formatCurrency(summary.balance)} className="text-primary" />
+          <StatItem label="Total Equity" value={formatCurrency(summary.equity)} />
+          <StatItem label="Total Margin" value={formatCurrency(summary.margin)} />
+          <StatItem label="Free Margin" value={formatCurrency(summary.freeMargin)} />
         </div>
         <div>
           <div className="flex justify-between items-baseline mb-1">
-            <p className="text-sm text-muted-foreground">Margin Level</p>
-            <p className="text-2xl font-bold font-headline text-accent">
-              {stats.marginLevel.toFixed(2)}%
+            <p className="text-sm text-muted-foreground">Aggregated Margin Level</p>
+            <p className="text-2xl font-bold font-headline text-primary">
+              {summary.marginLevel.toFixed(2)}%
             </p>
           </div>
-          <Progress value={Math.min(stats.marginLevel / 10, 100)} className="h-3 [&>*]:transition-all" indicatorClassName={getMarginLevelColor(stats.marginLevel)} />
-           <p className="text-xs text-muted-foreground mt-1">
-             A percentage value indicating the health of your account. Levels below 200% may trigger a margin call.
+          <Progress value={Math.min(summary.marginLevel / 10, 100)} className="h-3 [&>*]:transition-all" indicatorClassName={getMarginLevelColor(summary.marginLevel)} />
+           <p className="text-xs text-muted-foreground mt-2">
+             A percentage value indicating the health of your accounts. Levels below 200% may trigger a margin call.
            </p>
         </div>
       </CardContent>
