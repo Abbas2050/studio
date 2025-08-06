@@ -44,4 +44,3 @@ export type Trade = {
   price: number;
   time: string;
 };
-

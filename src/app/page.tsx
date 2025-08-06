@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import type { AccountStats, SymbolStat } from '@/lib/types';
+import type { AccountStats, SymbolStat, Account } from '@/lib/types';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { AccountStatsCard } from '@/components/dashboard/account-stats-card';
 import { SymbolCard } from '@/components/dashboard/symbol-card';
@@ -11,7 +11,7 @@ import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
 import { RecentTrades } from '@/components/dashboard/recent-trades';
 
 export default function Home() {
-  const [accountStats, setAccountStats] = useState<AccountStats | null>(null);
+  const [accountData, setAccountData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
   const [symbolStats, setSymbolStats] = useState<SymbolStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -25,7 +25,7 @@ export default function Home() {
       ]);
       const accountData = await accountRes.json();
       const symbolsData = await symbolsRes.json();
-      setAccountStats(accountData);
+      setAccountData(accountData);
       setSymbolStats(symbolsData);
       setLastUpdated(new Date());
     } catch (error) {
@@ -50,7 +50,7 @@ export default function Home() {
           lastUpdated={lastUpdated}
         />
         <div className="space-y-6">
-          <AccountStatsCard stats={accountStats} loading={loading} />
+          <AccountStatsCard stats={accountData} loading={loading} />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
@@ -59,7 +59,7 @@ export default function Home() {
                   ? Array.from({ length: 4 }).map((_, i) => <SymbolCard key={i} loading={true} />)
                   : symbolStats.slice(0, 4).map((stat) => <SymbolCard key={stat.symbol} data={stat} loading={false} />)}
               </div>
-              <AccountsTable loading={loading} />
+              <AccountsTable loading={loading} data={accountData?.accounts ?? []} />
               <SymbolStatsTable loading={loading} data={symbolStats} />
             </div>
             <div className="lg:col-span-1">

@@ -19,30 +19,22 @@ import { Badge } from '../ui/badge';
 
 type AccountsTableProps = {
   loading: boolean;
+  data: Account[];
 };
 
 const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
 const getColor = (value: number) => (value >= 0 ? 'text-green-400' : 'text-red-400');
 
-export function AccountsTable({ loading }: AccountsTableProps) {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+export function AccountsTable({ loading, data }: AccountsTableProps) {
   const [search, setSearch] = useState('');
 
-  useState(() => {
-    if(!loading) {
-        fetch('/api/account-stats')
-            .then(res => res.json())
-            .then(data => setAccounts(data.accounts));
-    }
-  });
-
   const filteredAccounts = useMemo(() => {
-    if (!accounts) return [];
-    return accounts.filter(account =>
+    if (!data) return [];
+    return data.filter(account =>
       account.login.toString().includes(search.toLowerCase())
     );
-  }, [accounts, search]);
+  }, [data, search]);
 
   const renderSkeleton = () => (
     <TableRow>
