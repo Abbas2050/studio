@@ -10,7 +10,7 @@ type DashboardHeaderProps = {
 };
 
 export function DashboardHeader({ onRefresh, loading, lastUpdated }: DashboardHeaderProps) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, mounted } = useTheme();
 
   return (
     <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
@@ -32,11 +32,13 @@ export function DashboardHeader({ onRefresh, loading, lastUpdated }: DashboardHe
           <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
           <span className="sr-only">Refresh data</span>
         </Button>
-        <Button onClick={toggleTheme} variant="outline" size="icon" className="bg-card hover:bg-secondary">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        {mounted && (
+          <Button onClick={toggleTheme} variant="outline" size="icon" className="bg-card hover:bg-secondary">
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        )}
       </div>
     </header>
   );

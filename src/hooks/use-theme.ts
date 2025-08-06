@@ -7,9 +7,9 @@ export function useTheme() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const storedTheme = localStorage.getItem("theme") || "dark"
     setTheme(storedTheme)
+    setMounted(true)
   }, [])
 
   useEffect(() => {
@@ -26,8 +26,8 @@ export function useTheme() {
 
   // Prevent UI flashing by returning a inert theme state until mounted
   if (!mounted) {
-    return { theme: "dark", toggleTheme: () => {} }
+    return { theme: "dark", toggleTheme: () => {}, mounted: false }
   }
 
-  return { theme, toggleTheme }
+  return { theme, toggleTheme, mounted: true }
 }
