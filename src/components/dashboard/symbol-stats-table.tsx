@@ -33,8 +33,8 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
     );
   }, [data, search]);
 
-  const renderSkeleton = () => (
-    <TableRow>
+  const renderSkeleton = (key: number) => (
+    <TableRow key={key}>
       {Array.from({ length: 4 }).map((_, i) => (
         <TableCell key={i}><Skeleton className="h-5 w-full" /></TableCell>
       ))}
@@ -70,7 +70,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
             </TableHeader>
             <TableBody>
               {loading ? (
-                Array.from({ length: 5 }).map((_, i) => renderSkeleton())
+                Array.from({ length: 5 }).map((_, i) => renderSkeleton(i))
               ) : filteredData.length > 0 ? (
                 filteredData.map((stat) => (
                   <TableRow key={stat.symbol}>
