@@ -33,5 +33,7 @@ export interface SymbolStat {
   }[];
   buyVolume: number;
   sellVolume: number;
+  buyVolumePercent: number;
+  sellVolumePercent: number;
   netVolume: number;
 }

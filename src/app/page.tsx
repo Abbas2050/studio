@@ -40,13 +40,13 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="flex flex-1 flex-col p-4 md:p-6 lg:p-8">
         <DashboardHeader
           onRefresh={fetchData}
           loading={loading}
           lastUpdated={lastUpdated}
         />
-        <div className="space-y-6">
+        <div className="flex-1 space-y-6">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {loading
               ? Array.from({ length: 4 }).map((_, i) => <SymbolCard key={i} loading={true} />)
