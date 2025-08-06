@@ -36,8 +36,8 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
     );
   }, [data, search]);
 
-  const renderSkeleton = () => (
-    <TableRow>
+  const renderSkeleton = (key: number) => (
+    <TableRow key={key}>
       {Array.from({ length: 10 }).map((_, i) => (
         <TableCell key={i}><Skeleton className="h-5 w-full" /></TableCell>
       ))}
@@ -79,7 +79,7 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
             </TableHeader>
             <TableBody>
               {loading ? (
-                Array.from({ length: 5 }).map((_, i) => renderSkeleton())
+                Array.from({ length: 5 }).map((_, i) => renderSkeleton(i))
               ) : filteredAccounts.length > 0 ? (
                 filteredAccounts.map((acc) => (
                   <TableRow key={acc.login}>
