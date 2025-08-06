@@ -1,17 +1,16 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
 import type { AccountStats, SymbolStat, Account } from '@/lib/types';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from '@/components/ui/sidebar';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
-import { AccountStatsCard } from '@/components/dashboard/account-stats-card';
 import { SymbolCard } from '@/components/dashboard/symbol-card';
 import { AccountsTable } from '@/components/dashboard/accounts-table';
 import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
-import { RecentTrades } from '@/components/dashboard/recent-trades';
+import { BookUser, CandlestickChart, Landmark, LineChart } from 'lucide-react';
 
 export default function Home() {
-  const [accountData, setAccountData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
+  const [data, setData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
   const [symbolStats, setSymbolStats] = useState<SymbolStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -25,7 +24,7 @@ export default function Home() {
       ]);
       const accountData = await accountRes.json();
       const symbolsData = await symbolsRes.json();
-      setAccountData(accountData);
+      setData(accountData);
       setSymbolStats(symbolsData);
       setLastUpdated(new Date());
     } catch (error) {
@@ -42,32 +41,60 @@ export default function Home() {
   }, [fetchData]);
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
-        <DashboardHeader
-          onRefresh={fetchData}
-          loading={loading}
-          lastUpdated={lastUpdated}
-        />
-        <div className="space-y-6">
-          <AccountStatsCard stats={accountData} loading={loading} />
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-6">
-               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
+        <Sidebar>
+          <SidebarHeader>
+            <div className="flex items-center gap-2 p-2">
+              <CandlestickChart className="w-8 h-8 text-primary" />
+              <h2 className="text-xl font-headline font-bold">TradeVision</h2>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive>
+                  <LineChart />
+                  <span>Dashboard</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <Landmark />
+                  <span>Accounts</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <BookUser />
+                  <span>Contacts</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+        <SidebarInset>
+          <main className="flex-1 p-4 md:p-6 lg:p-8">
+            <DashboardHeader
+              onRefresh={fetchData}
+              loading={loading}
+              lastUpdated={lastUpdated}
+            />
+            <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {loading
                   ? Array.from({ length: 4 }).map((_, i) => <SymbolCard key={i} loading={true} />)
                   : symbolStats.slice(0, 4).map((stat) => <SymbolCard key={stat.symbol} data={stat} loading={false} />)}
               </div>
-              <AccountsTable loading={loading} data={accountData?.accounts ?? []} />
-              <SymbolStatsTable loading={loading} data={symbolStats} />
+
+              <div className="grid grid-cols-1 gap-6">
+                <AccountsTable loading={loading} data={data?.accounts ?? []} />
+                <SymbolStatsTable loading={loading} data={symbolStats} />
+              </div>
             </div>
-            <div className="lg:col-span-1">
-              <RecentTrades />
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }

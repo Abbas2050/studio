@@ -35,12 +35,3 @@ export interface SymbolStat {
   sellVolume: number;
   netVolume: number;
 }
-
-export type Trade = {
-  id: string;
-  symbol: string;
-  type: 'BUY' | 'SELL';
-  volume: number;
-  price: number;
-  time: string;
-};
