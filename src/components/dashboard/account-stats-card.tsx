@@ -60,7 +60,7 @@ export function AccountStatsCard({ stats, loading }: AccountStatsCardProps) {
   const getMarginLevelColor = (level: number) => {
     if (level < 200) return 'bg-destructive';
     if (level < 500) return 'bg-yellow-500';
-    return 'bg-accent';
+    return 'bg-green-500';
   };
 
   return (
