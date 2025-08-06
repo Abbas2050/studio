@@ -33,6 +33,32 @@ export function RecentTrades() {
         setLoading(false);
     }, []);
 
+    if (loading) {
+      return (
+        <Card className="h-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5">
+            <CardHeader>
+                <CardTitle className="font-headline text-2xl">Recent Activity</CardTitle>
+                <CardDescription>Live feed of recent trades.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-[600px] pr-4">
+                    <div className="space-y-4">
+                        {Array.from({length: 10}).map((_, i) => (
+                             <div key={i} className="flex items-center space-x-4">
+                                <Skeleton className="h-10 w-10 rounded-full" />
+                                <div className="space-y-2 flex-1">
+                                    <Skeleton className="h-4 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
+      );
+    }
+
     return (
         <Card className="h-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5">
             <CardHeader>
@@ -42,15 +68,7 @@ export function RecentTrades() {
             <CardContent>
                 <ScrollArea className="h-[600px] pr-4">
                     <div className="space-y-4">
-                        {loading ? Array.from({length: 10}).map((_, i) => (
-                             <div key={i} className="flex items-center space-x-4">
-                                <Skeleton className="h-10 w-10 rounded-full" />
-                                <div className="space-y-2 flex-1">
-                                    <Skeleton className="h-4 w-3/4" />
-                                    <Skeleton className="h-4 w-1/2" />
-                                </div>
-                            </div>
-                        )) : trades.map((trade) => (
+                        {trades.map((trade) => (
                             <div key={trade.id} className="flex items-center">
                                 <div className="p-2 mr-3 rounded-full bg-secondary">
                                     {trade.type === 'BUY' ? (
@@ -76,4 +94,3 @@ export function RecentTrades() {
         </Card>
     );
 }
-
