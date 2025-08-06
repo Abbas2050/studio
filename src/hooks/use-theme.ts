@@ -4,20 +4,29 @@ import { useState, useEffect } from "react"
 
 export function useTheme() {
   const [theme, setTheme] = useState("dark")
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const storedTheme = localStorage.getItem("theme") || "dark"
     setTheme(storedTheme)
   }, [])
 
   useEffect(() => {
-    document.documentElement.classList.remove("light", "dark")
-    document.documentElement.classList.add(theme)
-    localStorage.setItem("theme", theme)
-  }, [theme])
+    if (mounted) {
+      document.documentElement.classList.remove("light", "dark")
+      document.documentElement.classList.add(theme)
+      localStorage.setItem("theme", theme)
+    }
+  }, [theme, mounted])
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"))
+  }
+
+  // Prevent UI flashing by returning a inert theme state until mounted
+  if (!mounted) {
+    return { theme: "dark", toggleTheme: () => {} }
   }
 
   return { theme, toggleTheme }
