@@ -86,7 +86,7 @@ export function PositionsPopup({ login, open, onOpenChange }: PositionsPopupProp
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">{(pos.volume / 10000).toFixed(2)}</TableCell>
-                <TableCell className="text-right">{pos.openPrice.toFixed(5)}</TableCell>
+                <TableCell className="text-right">{typeof pos.openPrice === 'number' ? pos.openPrice.toFixed(5) : 'N/A'}</TableCell>
                 <TableCell>{new Date(pos.openTime).toLocaleString()}</TableCell>
                 <TableCell className={cn("text-right", pos.profit >= 0 ? 'text-green-400' : 'text-red-400')}>{formatCurrency(pos.profit)}</TableCell>
                 <TableCell className={cn("text-right", pos.swap >= 0 ? 'text-green-400' : 'text-red-400')}>{formatCurrency(pos.swap)}</TableCell>
