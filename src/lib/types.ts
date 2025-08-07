@@ -11,6 +11,7 @@ export interface Account {
   floatingPnl: number;
   equity: number;
   currency: string;
+  credit: number;
 }
 
 export interface AccountStats {
@@ -21,6 +22,7 @@ export interface AccountStats {
   marginLevel: number;
   profit: number;
   floatingPnl: number;
+  credit: number;
 }
 
 export interface SymbolStat {

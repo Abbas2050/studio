@@ -6,7 +6,7 @@ import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { InfoCard } from '@/components/dashboard/info-card';
 import { AccountsTable } from '@/components/dashboard/accounts-table';
 import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
-import { DollarSign, BarChart, TrendingUp, Scale } from 'lucide-react';
+import { DollarSign, BarChart, TrendingUp, Scale, CreditCard } from 'lucide-react';
 
 export default function Home() {
   const [data, setData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
@@ -46,9 +46,9 @@ export default function Home() {
       icon: DollarSign,
     },
     {
-      title: 'Total Profit',
-      value: data?.summary?.profit,
-      icon: TrendingUp,
+      title: 'Total Credit',
+      value: data?.summary?.credit,
+      icon: CreditCard,
     },
     {
       title: 'Total Floating PNL',
