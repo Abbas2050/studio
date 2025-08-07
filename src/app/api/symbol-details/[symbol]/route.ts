@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { groupedSymbols } from '../symbol-stats/route';
+import { groupedSymbols } from '@/lib/symbol-utils';
 
 export const dynamic = 'force-dynamic';
 
