@@ -16,37 +16,43 @@ export default function Home() {
   const [symbolsLoading, setSymbolsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchAccountData = useCallback(async () => {
+  const handleRefresh = useCallback(async () => {
     setAccountsLoading(true);
-    try {
-      const response = await fetch('/api/account-stats');
-      const data = await response.json();
-      setAccountData(data);
-    } catch (error) {
-      console.error("Failed to fetch account data:", error);
-    } finally {
-      setAccountsLoading(false);
-    }
-  }, []);
-
-  const fetchSymbolData = useCallback(async () => {
     setSymbolsLoading(true);
+
     try {
-      const response = await fetch('/api/symbol-stats');
-      const data = await response.json();
-      setSymbolStats(data);
-    } catch (error) {
-      console.error("Failed to fetch symbol stats:", error);
+      await Promise.allSettled([
+        (async () => {
+          try {
+            const response = await fetch('/api/account-stats');
+            if (!response.ok) throw new Error('Failed to fetch account stats');
+            const data = await response.json();
+            setAccountData(data);
+          } catch (error) {
+            console.error("Failed to fetch account data:", error);
+            // Optionally set some error state here
+          } finally {
+            setAccountsLoading(false);
+          }
+        })(),
+        (async () => {
+          try {
+            const response = await fetch('/api/symbol-stats');
+            if (!response.ok) throw new Error('Failed to fetch symbol stats');
+            const data = await response.json();
+            setSymbolStats(data);
+          } catch (error) {
+            console.error("Failed to fetch symbol stats:", error);
+            // Optionally set some error state here
+          } finally {
+            setSymbolsLoading(false);
+          }
+        })(),
+      ]);
     } finally {
-      setSymbolsLoading(false);
+      setLastUpdated(new Date());
     }
   }, []);
-
-  const handleRefresh = useCallback(() => {
-    fetchAccountData();
-    fetchSymbolData();
-    setLastUpdated(new Date());
-  }, [fetchAccountData, fetchSymbolData]);
 
   useEffect(() => {
     handleRefresh();
