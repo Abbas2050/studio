@@ -50,8 +50,6 @@ export default function Home() {
 
   useEffect(() => {
     handleRefresh();
-    const interval = setInterval(handleRefresh, 60000); // Refresh every 1 minute
-    return () => clearInterval(interval);
   }, [handleRefresh]);
 
   const summaryStats = [
