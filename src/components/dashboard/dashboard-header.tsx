@@ -25,7 +25,7 @@ export function DashboardHeader({ onRefresh, loading, lastUpdated }: DashboardHe
     <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
       <div>
         <h1 className="text-3xl md:text-4xl font-headline font-bold text-primary tracking-tighter">
-          TradeVision Dashboard
+          Sky Links Capital
         </h1>
         <p className="text-muted-foreground mt-1">
           Your real-time market command center.
