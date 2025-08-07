@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -7,6 +8,8 @@ import { InfoCard } from '@/components/dashboard/info-card';
 import { AccountsTable } from '@/components/dashboard/accounts-table';
 import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
 import { DollarSign, BarChart, TrendingUp, Scale, CreditCard } from 'lucide-react';
+import { Preloader } from '@/components/dashboard/preloader';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const [accountData, setAccountData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
@@ -14,6 +17,7 @@ export default function Home() {
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [symbolsLoading, setSymbolsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const fetchAccountData = useCallback(async () => {
     setAccountsLoading(true);
@@ -52,6 +56,13 @@ export default function Home() {
     const interval = setInterval(handleRefresh, 60000); // Refresh every 1 minute
     return () => clearInterval(interval);
   }, [handleRefresh]);
+  
+  useEffect(() => {
+    if (!accountsLoading && !symbolsLoading && initialLoad) {
+      // Use a timeout to allow the fade-out animation to be seen
+      setTimeout(() => setInitialLoad(false), 500);
+    }
+  }, [accountsLoading, symbolsLoading, initialLoad]);
 
   const summaryStats = [
     {
@@ -78,7 +89,9 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
-      <main className="flex flex-1 flex-col p-4 md:p-6 lg:p-8">
+      <Preloader loading={initialLoad} />
+
+      <main className={cn("flex flex-1 flex-col p-4 md:p-6 lg:p-8 transition-opacity duration-500", initialLoad ? 'opacity-0' : 'opacity-100')}>
         <DashboardHeader
           onRefresh={handleRefresh}
           loading={accountsLoading || symbolsLoading}

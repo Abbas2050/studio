@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -88,10 +89,16 @@ export default {
             height: '0',
           },
         },
+        'spin-slow': {
+          '0%': { strokeDashoffset: '125.6' },
+          '50%': { strokeDashoffset: '0' },
+          '100%': { strokeDashoffset: '-125.6', transform: 'rotate(-90deg)' }
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'spin-slow': 'spin-slow 1.5s ease-in-out infinite',
       },
     },
   },
