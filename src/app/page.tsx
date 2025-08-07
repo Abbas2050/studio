@@ -6,7 +6,7 @@ import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { InfoCard } from '@/components/dashboard/info-card';
 import { AccountsTable } from '@/components/dashboard/accounts-table';
 import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
-import { DollarSign, BarChart, TrendingUp, PiggyBank, Scale } from 'lucide-react';
+import { DollarSign, BarChart, TrendingUp, Scale } from 'lucide-react';
 
 export default function Home() {
   const [data, setData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
