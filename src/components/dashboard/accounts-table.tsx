@@ -11,17 +11,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Badge } from '../ui/badge';
 import { PositionsPopup } from './positions-popup';
+import { PaginationControls } from './pagination-controls';
 
 type AccountsTableProps = {
   loading: boolean;
   data: Account[];
 };
+
+const ROWS_PER_PAGE = 15;
 
 const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
@@ -30,6 +33,7 @@ const getColor = (value: number) => (value >= 0 ? 'text-green-400' : 'text-red-4
 export function AccountsTable({ loading, data }: AccountsTableProps) {
   const [search, setSearch] = useState('');
   const [selectedLogin, setSelectedLogin] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAccounts = useMemo(() => {
     if (!data) return [];
@@ -37,6 +41,12 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
       account.login.toString().includes(search.toLowerCase())
     );
   }, [data, search]);
+  
+  const totalPages = Math.ceil(filteredAccounts.length / ROWS_PER_PAGE);
+  const paginatedAccounts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+    return filteredAccounts.slice(startIndex, startIndex + ROWS_PER_PAGE);
+  }, [filteredAccounts, currentPage]);
 
   const handleLoginClick = (login: number) => {
     setSelectedLogin(login);
@@ -52,7 +62,7 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
 
   return (
     <>
-      <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5">
+      <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5 flex flex-col">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
@@ -67,7 +77,7 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
             />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -87,8 +97,8 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
               <TableBody>
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => renderSkeleton(i))
-                ) : filteredAccounts.length > 0 ? (
-                  filteredAccounts.map((acc) => (
+                ) : paginatedAccounts.length > 0 ? (
+                  paginatedAccounts.map((acc) => (
                     <TableRow key={acc.login}>
                       <TableCell 
                         className="font-medium text-primary/90 cursor-pointer hover:underline"
@@ -122,6 +132,13 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
             </Table>
           </div>
         </CardContent>
+         <CardFooter>
+            <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+        </CardFooter>
       </Card>
       {selectedLogin && (
         <PositionsPopup

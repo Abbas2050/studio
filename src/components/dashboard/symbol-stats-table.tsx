@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { SymbolStat } from '@/lib/types';
 import {
   Table,
@@ -11,22 +11,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn, formatCompactNumber } from '@/lib/utils';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { SymbolDetailPopup } from './symbol-detail-popup';
+import { PaginationControls } from './pagination-controls';
 
 type SymbolStatsTableProps = {
   data: SymbolStat[];
   loading: boolean;
 };
 
+const ROWS_PER_PAGE = 15;
+
 export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
   const [search, setSearch] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredData = useMemo(() => {
     return data.filter(stat =>
@@ -34,6 +38,17 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
       stat.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
+  
+  useEffect(() => {
+      setCurrentPage(1);
+  }, [search]);
+  
+  const totalPages = Math.ceil(filteredData.length / ROWS_PER_PAGE);
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+    return filteredData.slice(startIndex, startIndex + ROWS_PER_PAGE);
+  }, [filteredData, currentPage]);
+
 
   const handleSymbolClick = (symbol: SymbolStat) => {
     if (symbol.isGroup) {
@@ -51,7 +66,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
   
   return (
     <>
-      <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5 transition-all duration-300 hover:shadow-primary/10">
+      <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg shadow-primary/5 transition-all duration-300 hover:shadow-primary/10 flex flex-col">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
@@ -66,7 +81,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
             />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -80,8 +95,8 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
               <TableBody>
                 {loading ? (
                   Array.from({ length: 8 }).map((_, i) => renderSkeleton(i))
-                ) : filteredData.length > 0 ? (
-                  filteredData.map((stat) => (
+                ) : paginatedData.length > 0 ? (
+                  paginatedData.map((stat) => (
                     <TableRow key={stat.symbol} className="transition-colors hover:bg-secondary/30" onClick={() => handleSymbolClick(stat)}>
                       <TableCell>
                         <div className={cn("font-medium", stat.isGroup ? "text-primary/90 cursor-pointer hover:underline" : "text-foreground")}>{stat.symbol}</div>
@@ -114,6 +129,13 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
             </Table>
           </div>
         </CardContent>
+        <CardFooter>
+            <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+        </CardFooter>
       </Card>
       {selectedSymbol && (
         <SymbolDetailPopup

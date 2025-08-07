@@ -42,15 +42,17 @@ async function getSymbolStats() {
         const netVolume = buyVol - sellVol;
         const totalVolume = buyVol + sellVol;
 
-        symbolStats.push({
-            symbol: parent,
-            buyVolume: +buyVol.toFixed(2),
-            sellVolume: +sellVol.toFixed(2),
-            buyVolumePercent: totalVolume > 0 ? (buyVol / totalVolume) * 100 : 0,
-            sellVolumePercent: totalVolume > 0 ? (sellVol / totalVolume) * 100 : 0,
-            netVolume: +netVolume.toFixed(2),
-            isGroup: subs.size > 1,
-        });
+        if (netVolume !== 0) {
+            symbolStats.push({
+                symbol: parent,
+                buyVolume: +buyVol.toFixed(2),
+                sellVolume: +sellVol.toFixed(2),
+                buyVolumePercent: totalVolume > 0 ? (buyVol / totalVolume) * 100 : 0,
+                sellVolumePercent: totalVolume > 0 ? (sellVol / totalVolume) * 100 : 0,
+                netVolume: +netVolume.toFixed(2),
+                isGroup: subs.size > 1,
+            });
+        }
     }
 
     return symbolStats;
