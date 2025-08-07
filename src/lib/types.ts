@@ -38,4 +38,17 @@ export interface SymbolStat {
   buyVolumePercent: number;
   sellVolumePercent: number;
   netVolume: number;
+  isGroup: boolean;
+}
+
+export interface Position {
+  login: number;
+  symbol: string;
+  action: number; // 0 for Buy, 1 for Sell
+  volume: number;
+  openPrice: number;
+  openTime: string;
+  profit: number;
+  swap: number;
+  commission: number;
 }

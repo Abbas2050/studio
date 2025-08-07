@@ -29,7 +29,7 @@ const RAW_SYMBOLS = [
   'XAUUSD.mp', 'XAUUSD.s', 'XAUUSD.tdh1', 'XAUUSD.test', 'XPTUSD.c', 'XRPUSD'
 ];
 
-const groupedSymbols: { [key: string]: Set<string> } = {};
+export const groupedSymbols: { [key: string]: Set<string> } = {};
 RAW_SYMBOLS.forEach(sym => {
     const parent = sym.includes('.') ? sym.split('.')[0] : sym;
     if (!groupedSymbols[parent]) {
@@ -45,28 +45,32 @@ async function getSymbolStats() {
         let buyVol = 0;
         let sellVol = 0;
 
-        const fetchPromises = Array.from(subs).map(async (sub) => {
-            try {
-                const encodedSymbol = encodeURIComponent(sub);
-                const res = await fetch(`https://api.skylinkstrader.com/Position/GetPositionsBySymbol?symbol=${encodedSymbol}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data)) {
-                        data.forEach(pos => {
-                            if (pos.action === 0) { // BUY
-                                buyVol += (pos.volume / 10000);
-                            } else if (pos.action === 1) { // SELL
-                                sellVol += (pos.volume / 10000);
-                            }
-                        });
+        // Limit concurrent fetches to avoid overwhelming the server
+        const batchSize = 10;
+        const subsArray = Array.from(subs);
+        for (let i = 0; i < subsArray.length; i += batchSize) {
+            const batch = subsArray.slice(i, i + batchSize);
+            await Promise.all(batch.map(async (sub) => {
+                try {
+                    const encodedSymbol = encodeURIComponent(sub);
+                    const res = await fetch(`https://api.skylinkstrader.com/Position/GetPositionsBySymbol?symbol=${encodedSymbol}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (Array.isArray(data)) {
+                            data.forEach(pos => {
+                                if (pos.action === 0) { // BUY
+                                    buyVol += (pos.volume / 10000);
+                                } else if (pos.action === 1) { // SELL
+                                    sellVol += (pos.volume / 10000);
+                                }
+                            });
+                        }
                     }
+                } catch (error) {
+                    // console.error(`Failed to fetch position for symbol ${sub}:`, error);
                 }
-            } catch (error) {
-                // console.error(`Failed to fetch position for symbol ${sub}:`, error);
-            }
-        });
-
-        await Promise.all(fetchPromises);
+            }));
+        }
 
         const netVolume = buyVol - sellVol;
         const totalVolume = buyVol + sellVol;
@@ -78,6 +82,7 @@ async function getSymbolStats() {
             buyVolumePercent: totalVolume > 0 ? (buyVol / totalVolume) * 100 : 0,
             sellVolumePercent: totalVolume > 0 ? (sellVol / totalVolume) * 100 : 0,
             netVolume: +netVolume.toFixed(2),
+            isGroup: subs.size > 1,
         });
     }
 
@@ -119,6 +124,9 @@ export async function GET() {
                 spread: parseFloat(dummy.spread),
             };
         });
+
+        // Sort by net volume descending
+        data.sort((a,b) => b.netVolume - a.netVolume);
 
         return NextResponse.json(data);
     } catch (error) {
