@@ -15,6 +15,15 @@ export async function GET() {
     // Filter out accounts with login < 1000
     const filteredAccounts = accounts.filter(acc => acc.login >= 1000);
 
+    // Sort accounts: those with open positions (non-zero floatingPnl) first
+    filteredAccounts.sort((a, b) => {
+        const aHasPnl = a.floatingPnl !== 0;
+        const bHasPnl = b.floatingPnl !== 0;
+        if (aHasPnl && !bHasPnl) return -1;
+        if (!aHasPnl && bHasPnl) return 1;
+        return 0; // or sort by login descending as a secondary criterion
+    });
+
     const summary = filteredAccounts.reduce((acc, account) => {
         acc.balance += account.balance;
         acc.equity += account.equity;
