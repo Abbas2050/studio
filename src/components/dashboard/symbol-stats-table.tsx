@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn, formatCompactNumber } from '@/lib/utils';
-import { ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { SymbolDetailPopup } from './symbol-detail-popup';
 
@@ -43,7 +43,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
 
   const renderSkeleton = (key: number) => (
     <TableRow key={key}>
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <TableCell key={i}><Skeleton className="h-5 w-full" /></TableCell>
       ))}
     </TableRow>
@@ -56,7 +56,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
               <CardTitle className="font-headline text-2xl">Market Watch</CardTitle>
-              <CardDescription>Real-time trading volume and price data</CardDescription>
+              <CardDescription>Real-time trading volume data</CardDescription>
             </div>
             <Input
               placeholder="Search Symbol..."
@@ -71,20 +71,10 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    <div className="flex items-center gap-1">Symbol <ArrowUpDown className="h-3 w-3" /></div>
-                  </TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                  <TableHead className="text-right">Change</TableHead>
-                  <TableHead className="text-right">
-                    <div className="flex items-center justify-end gap-1">Buy Volume <ArrowUpDown className="h-3 w-3" /></div>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <div className="flex items-center justify-end gap-1">Sell Volume <ArrowUpDown className="h-3 w-3" /></div>
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <div className="flex items-center justify-end gap-1">Net Volume <ArrowUpDown className="h-3 w-3" /></div>
-                  </TableHead>
+                  <TableHead>Symbol</TableHead>
+                  <TableHead className="text-right">Buy Volume</TableHead>
+                  <TableHead className="text-right">Sell Volume</TableHead>
+                  <TableHead className="text-right">Net Volume</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -96,10 +86,6 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
                       <TableCell>
                         <div className={cn("font-medium", stat.isGroup ? "text-primary/90 cursor-pointer hover:underline" : "text-foreground")}>{stat.symbol}</div>
                         <div className="text-xs text-muted-foreground">{stat.name}</div>
-                      </TableCell>
-                      <TableCell className="text-right font-mono">{stat.price.toFixed(4)}</TableCell>
-                      <TableCell className={cn("text-right font-mono", stat.changePercent >= 0 ? 'text-green-400' : 'text-red-400')}>
-                        {stat.changePercent.toFixed(2)}%
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="font-semibold text-green-400">{formatCompactNumber(stat.buyVolume)}</div>
@@ -119,7 +105,7 @@ export function SymbolStatsTable({ data, loading }: SymbolStatsTableProps) {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center h-24">
+                    <TableCell colSpan={4} className="text-center h-24">
                       No symbols found.
                     </TableCell>
                   </TableRow>
