@@ -20,8 +20,10 @@ export async function GET() {
         acc.equity += account.equity;
         acc.margin += account.margin;
         acc.freeMargin += account.marginFree;
+        acc.profit += account.profit;
+        acc.floatingPnl += account.floatingPnl;
         return acc;
-    }, { balance: 0, equity: 0, margin: 0, freeMargin: 0, marginLevel: 0 });
+    }, { balance: 0, equity: 0, margin: 0, freeMargin: 0, marginLevel: 0, profit: 0, floatingPnl: 0 });
 
     const totalMargin = summary.margin;
     summary.marginLevel = totalMargin > 0 ? (summary.equity / totalMargin) * 100 : 0;

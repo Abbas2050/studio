@@ -19,6 +19,8 @@ export interface AccountStats {
   margin: number;
   freeMargin: number;
   marginLevel: number;
+  profit: number;
+  floatingPnl: number;
 }
 
 export interface SymbolStat {
