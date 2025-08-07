@@ -1,14 +1,16 @@
+
 export interface Account {
   login: number;
   balance: number;
   margin: number;
-  freeMargin: number;
+  marginFree: number;
   marginLevel: number;
-  leverage: number;
+  marginLeverage: number;
   profit: number;
   swap: number;
   floatingPnl: number;
   equity: number;
+  currency: string;
 }
 
 export interface AccountStats {

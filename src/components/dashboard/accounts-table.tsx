@@ -87,13 +87,13 @@ export function AccountsTable({ loading, data }: AccountsTableProps) {
                     <TableCell className="text-right">{formatCurrency(acc.balance)}</TableCell>
                     <TableCell className="text-right font-semibold">{formatCurrency(acc.equity)}</TableCell>
                     <TableCell className="text-right">{formatCurrency(acc.margin)}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(acc.freeMargin)}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(acc.marginFree)}</TableCell>
                     <TableCell className="text-right">
                         <Badge variant={acc.marginLevel < 200 ? 'destructive' : 'default'} className={cn(acc.marginLevel < 500 && acc.marginLevel >=200 && 'bg-yellow-500/80', acc.marginLevel >= 500 && 'bg-green-500/80' )}>
                             {acc.marginLevel.toFixed(2)}%
                         </Badge>
                     </TableCell>
-                    <TableCell className="text-right">1:{acc.leverage}</TableCell>
+                    <TableCell className="text-right">1:{acc.marginLeverage}</TableCell>
                     <TableCell className={cn("text-right", getColor(acc.profit))}>{formatCurrency(acc.profit)}</TableCell>
                     <TableCell className={cn("text-right", getColor(acc.swap))}>{formatCurrency(acc.swap)}</TableCell>
                     <TableCell className={cn("text-right font-bold", getColor(acc.floatingPnl))}>{formatCurrency(acc.floatingPnl)}</TableCell>
