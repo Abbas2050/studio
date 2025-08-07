@@ -9,55 +9,69 @@ import { SymbolStatsTable } from '@/components/dashboard/symbol-stats-table';
 import { DollarSign, BarChart, TrendingUp, Scale, CreditCard } from 'lucide-react';
 
 export default function Home() {
-  const [data, setData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
+  const [accountData, setAccountData] = useState<{ summary: AccountStats; accounts: Account[] } | null>(null);
   const [symbolStats, setSymbolStats] = useState<SymbolStat[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [symbolsLoading, setSymbolsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const fetchAccountData = useCallback(async () => {
+    setAccountsLoading(true);
     try {
-      const [accountRes, symbolsRes] = await Promise.all([
-        fetch('/api/account-stats'),
-        fetch('/api/symbol-stats'),
-      ]);
-      const accountData = await accountRes.json();
-      const symbolsData = await symbolsRes.json();
-      setData(accountData);
-      setSymbolStats(symbolsData);
-      setLastUpdated(new Date());
+      const response = await fetch('/api/account-stats');
+      const data = await response.json();
+      setAccountData(data);
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      console.error("Failed to fetch account data:", error);
     } finally {
-      setLoading(false);
+      setAccountsLoading(false);
     }
   }, []);
 
+  const fetchSymbolData = useCallback(async () => {
+    setSymbolsLoading(true);
+    try {
+      const response = await fetch('/api/symbol-stats');
+      const data = await response.json();
+      setSymbolStats(data);
+    } catch (error) {
+      console.error("Failed to fetch symbol stats:", error);
+    } finally {
+      setSymbolsLoading(false);
+    }
+  }, []);
+
+  const handleRefresh = useCallback(() => {
+    fetchAccountData();
+    fetchSymbolData();
+    setLastUpdated(new Date());
+  }, [fetchAccountData, fetchSymbolData]);
+
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 60000); // Refresh every 1 minute
+    handleRefresh();
+    const interval = setInterval(handleRefresh, 60000); // Refresh every 1 minute
     return () => clearInterval(interval);
-  }, [fetchData]);
+  }, [handleRefresh]);
 
   const summaryStats = [
     {
       title: 'Total Equity',
-      value: data?.summary?.equity,
+      value: accountData?.summary?.equity,
       icon: DollarSign,
     },
     {
       title: 'Total Credit',
-      value: data?.summary?.credit,
+      value: accountData?.summary?.credit,
       icon: CreditCard,
     },
     {
       title: 'Total Floating PNL',
-      value: data?.summary?.floatingPnl,
+      value: accountData?.summary?.floatingPnl,
       icon: BarChart,
     },
     {
       title: 'Total Margin',
-      value: data?.summary?.margin,
+      value: accountData?.summary?.margin,
       icon: Scale,
     },
   ];
@@ -66,8 +80,8 @@ export default function Home() {
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
       <main className="flex flex-1 flex-col p-4 md:p-6 lg:p-8">
         <DashboardHeader
-          onRefresh={fetchData}
-          loading={loading}
+          onRefresh={handleRefresh}
+          loading={accountsLoading || symbolsLoading}
           lastUpdated={lastUpdated}
         />
         <div className="flex-1 space-y-6">
@@ -78,14 +92,14 @@ export default function Home() {
                 title={stat.title}
                 value={stat.value}
                 icon={stat.icon}
-                loading={loading}
+                loading={accountsLoading}
               />
             ))}
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            <SymbolStatsTable loading={loading} data={symbolStats} />
-            <AccountsTable loading={loading} data={data?.accounts ?? []} />
+            <SymbolStatsTable loading={symbolsLoading} data={symbolStats} />
+            <AccountsTable loading={accountsLoading} data={accountData?.accounts ?? []} />
           </div>
         </div>
       </main>
